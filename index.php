@@ -5,7 +5,7 @@ include 'views/includes/header.php';
 <p>Explore our features:</p>
 <ul>
     <li><a href="views/recipe.php">Recipe Gallery</a></li>
-    <li><a href="views/timer.php">Cooking Timer</a></li>
+    <li><a href="views/timer.php">Cooking Tr</a></li>
 </ul>
 <?php
 include 'views/includes/footer.php';
