@@ -152,7 +152,45 @@
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
-        
+        .edit-btn,
+.delete-btn {
+    padding: 5px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 6px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+    height: 34px;
+    line-height: 34px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.edit-btn {
+    background-color: #1976d2;
+}
+
+.edit-btn:hover {
+    background-color: #1565c0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
+}
+
+.delete-btn {
+    background-color: #d32f2f;
+}
+
+.delete-btn:hover {
+    background-color: #b71c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(183, 28, 28, 0.3);
+}
+
     </style>
 </head>
 <body>

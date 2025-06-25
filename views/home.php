@@ -66,7 +66,109 @@ if (isset($_GET['filter'])) {
             margin: 20px auto;
             padding: 0 20px;
         }
-        
+        .filter-section {
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-section select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .filter-section select:focus {
+            border-color: #666;
+            box-shadow: 0 0 5px rgba(100, 100, 100, 0.3);
+            outline: none;
+        }
+
+        .filter-section button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .filter-section button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 10px;
+        }
+
+        .recipe-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .recipe-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .recipe-card img {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .recipe-card h3 {
+            margin: 10px 0 5px;
+            font-size: 20px;
+            color: #222;
+        }
+
+        .recipe-card p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .admin-link {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .admin-link:hover {
+            color: #1a252f;
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body>
