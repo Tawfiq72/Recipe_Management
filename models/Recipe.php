@@ -179,5 +179,43 @@ class Recipe {
         return true;
     }
 
+     
+    public function updateIngredients($recipe_id, $ingredients) {
+       
+        $delete_query = "DELETE FROM ingredients WHERE recipe_id = ?";
+        $stmt = mysqli_prepare($this->conn, $delete_query);
+        mysqli_stmt_bind_param($stmt, "i", $recipe_id);
+        if (!mysqli_stmt_execute($stmt)) {
+            return false;
+        }
+       
+        $insert_query = "INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($this->conn, $insert_query);
+        foreach ($ingredients as $ingredient) {
+            $name = $ingredient['name'];
+            $quantity = $ingredient['quantity'];
+            $unit = $ingredient['unit'];
+            mysqli_stmt_bind_param($stmt, "isds", $recipe_id, $name, $quantity, $unit);
+            if (!mysqli_stmt_execute($stmt)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    
+    public function getIngredients($recipe_id) {
+        $query = "SELECT name, quantity, unit FROM ingredients WHERE recipe_id = ?";
+        $stmt = mysqli_prepare($this->conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $recipe_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $ingredients = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $ingredients[] = $row;
+        }
+        return $ingredients;
+    }
+
 }
 
