@@ -152,33 +152,7 @@
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
-        .edit-btn, .delete-btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 5px;
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
-            display: inline-block;
-            text-align: center;
-            min-width: 70px; /* Match width to ensure size consistency */
-            height: 30px; /* Match height to ensure size consistency */
-            line-height: 30px; /* Center text vertically */
-        }
-        .edit-btn {
-            background-color: #1976d2; /* Blue for edit */
-        }
-        .edit-btn:hover {
-            background-color: #1565c0; /* Darker blue on hover */
-        }
-        .delete-btn {
-            background-color: #d32f2f; /* Red for delete */
-        }
-        .delete-btn:hover {
-            background-color: #b71c1c; /* Darker red on hover */
-        }
+        
     </style>
 </head>
 <body>
