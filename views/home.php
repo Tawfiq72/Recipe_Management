@@ -66,69 +66,7 @@ if (isset($_GET['filter'])) {
             margin: 20px auto;
             padding: 0 20px;
         }
-        .filter-section {
-            margin-bottom: 20px;
-            background-color: white;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .filter-section select {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        .filter-section button {
-            padding: 8px 15px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .filter-section button:hover {
-            background-color: #555;
-        }
-        .recipe-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .recipe-card {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            text-align: center;
-        }
-        .recipe-card img {
-            max-width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-        .recipe-card h3 {
-            margin: 10px 0 5px;
-            font-size: 18px;
-        }
-        .recipe-card p {
-            margin: 5px 0;
-            color: #666;
-        }
-        .admin-link {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        .admin-link:hover {
-            text-decoration: underline;
-        }
+        
     </style>
 </head>
 <body>
