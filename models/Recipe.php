@@ -95,5 +95,89 @@ class Recipe {
         return mysqli_stmt_execute($stmt);
     }
 
+    // Delete recipe and its related records
+    public function deleteRecipe($id) {
+        // Start transaction to ensure all deletions succeed or fail together
+        mysqli_begin_transaction($this->conn);
+
+        try {
+            
+            $delete_ingredients = "DELETE FROM ingredients WHERE recipe_id = ?";
+            $stmt1 = mysqli_prepare($this->conn, $delete_ingredients);
+            mysqli_stmt_bind_param($stmt1, "i", $id);
+            $success1 = mysqli_stmt_execute($stmt1);
+
+            $delete_recipe = "DELETE FROM recipes WHERE id = ?";
+            $stmt2 = mysqli_prepare($this->conn, $delete_recipe);
+            mysqli_stmt_bind_param($stmt2, "i", $id);
+            $success2 = mysqli_stmt_execute($stmt2);
+
+            if ($success1 && $success2) {
+                mysqli_commit($this->conn);
+                return true;
+            } else {
+                mysqli_rollback($this->conn);
+                return false;
+            }
+        } catch (Exception $e) {
+        
+            mysqli_rollback($this->conn);
+            return false;
+        }
+    }
+
+    public function addRating($recipe_id, $user_id, $rating, $review) {
+        $query = "INSERT INTO ratings (recipe_id, user_id, rating) 
+                  VALUES (?, ?, ?) 
+                  ON DUPLICATE KEY UPDATE rating = ?";
+        $stmt = mysqli_prepare($this->conn, $query);
+        mysqli_stmt_bind_param($stmt, "iiid", $recipe_id, $user_id, $rating, $rating);
+        return mysqli_stmt_execute($stmt);
+    }
+
+    public function getRatings($recipe_id) {
+        $query = "SELECT r.rating, u.username 
+                  FROM ratings r 
+                  JOIN users u ON r.user_id = u.id 
+                  WHERE r.recipe_id = ?";
+        $stmt = mysqli_prepare($this->conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $recipe_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $ratings = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $ratings[] = $row;
+        }
+        return $ratings;
+    }
+
+    
+    public function getAverageRating($recipe_id) {
+        $query = "SELECT AVG(rating) as average_rating 
+                  FROM ratings 
+                  WHERE recipe_id = ?";
+        $stmt = mysqli_prepare($this->conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $recipe_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
+        return $row['average_rating'] ? round($row['average_rating'], 1) : 0;
+    }
+
+    public function addIngredients($recipe_id, $ingredients) {
+        $query = "INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($this->conn, $query);
+        foreach ($ingredients as $ingredient) {
+            $name = $ingredient['name'];
+            $quantity = $ingredient['quantity'];
+            $unit = $ingredient['unit'];
+            mysqli_stmt_bind_param($stmt, "isds", $recipe_id, $name, $quantity, $unit);
+            if (!mysqli_stmt_execute($stmt)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
 
