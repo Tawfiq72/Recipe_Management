@@ -1,11 +1,9 @@
 <?php
 session_start();
 
-// Include database connection and controller
 require_once '../config/db.php';
 require_once '../controllers/RecipeController.php';
 
-// Initialize controller
 $controller = new RecipeController($conn);
 
 // Get recipe ID from URL

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Include database connection and controller
 require_once '../config/db.php';
 require_once '../controllers/UserController.php';
 
@@ -28,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = $controller->register($username, $email, $password);
         if ($result === true) {
             $_SESSION['username'] = $username;
-            $_SESSION['user_id'] = $controller->getUserId($username); // Assuming getUserId exists
+            $_SESSION['user_id'] = $controller->getUserId($username);
             header("Location: home.php");
             exit();
         } else {
@@ -39,13 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Management - Register</title>
     <style>
-        body {
+        body{
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -55,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             align-items: center;
             height: 100vh;
         }
-        .login-container {
+        .login-container{
             background-color: white;
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -63,22 +60,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             width: 300px;
             text-align: center;
         }
-        .login-container h2 {
+        .login-container h2{
             margin: 0 0 15px;
             font-size: 24px;
         }
-        .login-container form {
+        .login-container form{
             display: flex;
             flex-direction: column;
         }
-        .login-container input {
+        .login-container input{
             padding: 8px;
             margin-bottom: 10px;
             font-size: 14px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .login-container button {
+        .login-container button{
             padding: 8px;
             background-color: #333;
             color: white;
@@ -87,19 +84,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 14px;
             cursor: pointer;
         }
-        .login-container button:hover {
+        .login-container button:hover{
             background-color: #555;
         }
-        .error {
+        .error{
             color: red;
             margin-bottom: 10px;
         }
-        .login-link {
+        .login-link{
             margin-top: 10px;
             text-decoration: none;
             color: #333;
         }
-        .login-link:hover {
+        .login-link:hover{
             text-decoration: underline;
         }
     </style>

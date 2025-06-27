@@ -1,11 +1,10 @@
 <?php
 session_start();
 
-// Include database connection and controller
 require_once '../config/db.php';
 require_once '../controllers/RecipeController.php';
 
-// Initialize controller
+
 $controller = new RecipeController($conn);
 
 // Fetch cuisines and meal types for dropdowns
@@ -29,19 +28,17 @@ if (isset($_GET['filter'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Management - Home</title>
     <style>
-        body {
+        body{
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
-        .header {
+        .header{
             background-color: #333;
             color: white;
             padding: 10px 20px;
@@ -49,24 +46,24 @@ if (isset($_GET['filter'])) {
             justify-content: space-between;
             align-items: center;
         }
-        .header h1 {
+        .header h1{
             margin: 0;
             font-size: 24px;
         }
-        .login-section a, .login-section span {
+        .login-section a,.login-section span{
             color: white;
             text-decoration: none;
             margin-left: 10px;
         }
-        .login-section a:hover {
+        .login-section a:hover{
             text-decoration: underline;
         }
-        .container {
+        .container{
             max-width: 1200px;
             margin: 20px auto;
             padding: 0 20px;
         }
-        .filter-section {
+        .filter-section{
             margin-bottom: 20px;
             background-color: white;
             padding: 20px;
@@ -81,7 +78,7 @@ if (isset($_GET['filter'])) {
             transition: all 0.3s ease;
         }
 
-        .filter-section select {
+        .filter-section select{
             padding: 10px;
             font-size: 16px;
             border: 1px solid #bbb;
@@ -89,13 +86,13 @@ if (isset($_GET['filter'])) {
             transition: border 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .filter-section select:focus {
+        .filter-section select:focus{
             border-color: #666;
             box-shadow: 0 0 5px rgba(100, 100, 100, 0.3);
             outline: none;
         }
 
-        .filter-section button {
+        .filter-section button{
             padding: 10px 20px;
             background-color: #333;
             color: white;
@@ -106,19 +103,19 @@ if (isset($_GET['filter'])) {
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        .filter-section button:hover {
+        .filter-section button:hover{
             background-color: #555;
             transform: translateY(-2px);
         }
 
-        .recipe-grid {
+        .recipe-grid{
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             padding: 10px;
         }
 
-        .recipe-card {
+        .recipe-card{
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 10px;
@@ -128,12 +125,12 @@ if (isset($_GET['filter'])) {
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        .recipe-card:hover {
+        .recipe-card:hover{
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transform: translateY(-5px);
         }
 
-        .recipe-card img {
+        .recipe-card img{
             max-width: 100%;
             height: 200px;
             object-fit: cover;
@@ -141,19 +138,19 @@ if (isset($_GET['filter'])) {
             margin-bottom: 10px;
         }
 
-        .recipe-card h3 {
+        .recipe-card h3{
             margin: 10px 0 5px;
             font-size: 20px;
             color: #222;
         }
 
-        .recipe-card p {
+        .recipe-card p{
             margin: 5px 0;
             color: #555;
             font-size: 14px;
         }
 
-        .admin-link {
+        .admin-link{
             display: block;
             margin-top: 30px;
             text-align: center;
@@ -164,7 +161,7 @@ if (isset($_GET['filter'])) {
             transition: color 0.3s ease;
         }
 
-        .admin-link:hover {
+        .admin-link:hover{
             color: #1a252f;
             text-decoration: underline;
         }

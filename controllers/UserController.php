@@ -1,20 +1,20 @@
 <?php
 require_once '../models/User.php';
 
-class UserController {
+class UserController{
     private $conn;
     private $user;
 
-    public function __construct($conn) {
+    public function __construct($conn){
         $this->conn = $conn;
         $this->user = new User($conn);
     }
 
-    public function register($username, $email, $password) {
+    public function register($username, $email, $password){
         if ($this->user->usernameExists($username)) {
             return "Username already taken.";
         }
-        if ($this->user->emailExists($email)) {
+        if ($this->user->emailExists($email)){
             return "Email already registered.";
         }
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -25,7 +25,7 @@ class UserController {
         return "Registration failed.";
     }
 
-    public function login($username, $password) {
+    public function login($username, $password){
         $user = $this->user->getUserByUsername($username);
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['username'] = $username;
@@ -36,7 +36,7 @@ class UserController {
         return "Invalid username or password.";
     }
 
-    public function getUserId($username) {
+    public function getUserId($username){
         $user = $this->user->getUserByUsername($username);
         return $user ? $user['id'] : null;
     }
