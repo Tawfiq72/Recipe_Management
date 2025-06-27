@@ -73,19 +73,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Recipe Management - <?php echo htmlspecialchars($recipe['title']); ?></title>
     <style>
-        body {
+        body{
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
-        .header {
+        .header{
             background-color: #333;
             color: white;
             padding: 10px 20px;
@@ -93,81 +92,81 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             justify-content: space-between;
             align-items: center;
         }
-        .header h1 {
+        .header h1{
             margin: 0;
             font-size: 24px;
         }
-        .login-section a, .login-section span {
+        .login-section a,.login-section span{
             color: white;
             text-decoration: none;
             margin-left: 10px;
         }
-        .login-section a:hover {
+        .login-section a:hover{
             text-decoration: underline;
         }
-        .container {
+        .container{
             max-width: 800px;
             margin: 20px auto;
             padding: 0 20px;
         }
-        .recipe-detail {
+        .recipe-detail{
             background-color: white;
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 20px;
         }
-        .recipe-detail img {
+        .recipe-detail img{
             max-width: 100%;
             height: auto;
             border-radius: 5px;
         }
-        .recipe-detail h2 {
+        .recipe-detail h2{
             margin: 0 0 15px;
             font-size: 24px;
         }
-        .recipe-detail h3 {
+        .recipe-detail h3{
             margin: 15px 0 10px;
             font-size: 18px;
         }
-        .recipe-detail p {
+        .recipe-detail p{
             margin: 10px 0;
             color: #666;
         }
-        .recipe-detail ul {
+        .recipe-detail ul{
             list-style-type: disc;
             padding-left: 20px;
             margin: 10px 0;
         }
-        .recipe-detail ul li {
+        .recipe-detail ul li{
             margin-bottom: 5px;
             color: #666;
         }
-        .timer-section, .conversion-section, .substitution-section, .print-section, .rating-section {
+        .timer-section,.conversion-section,.substitution-section,.print-section,.rating-section{
             margin-top: 20px;
             padding: 15px;
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .timer-section h3, .conversion-section h3, .substitution-section h3, .print-section h3, .rating-section h3 {
+        .timer-section h3,.conversion-section h3,.substitution-section h3,.print-section h3,.rating-section h3{
             margin: 0 0 10px;
             font-size: 18px;
         }
-        .timer-panel {
+        .timer-panel{
             margin-bottom: 15px;
         }
-        .timer-item {
+        .timer-item{
             display: flex;
             align-items: center;
             margin-bottom: 10px;
         }
-        .timer-display {
+        .timer-display{
             font-size: 18px;
             font-weight: bold;
             margin-right: 10px;
             min-width: 80px;
         }
-        .timer-controls button {
+        .timer-controls button{
             padding: 5px 10px;
             margin-right: 5px;
             background-color: #333;
@@ -177,14 +176,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             font-size: 14px;
             cursor: pointer;
         }
-        .timer-controls button:hover {
+        .timer-controls button:hover{
             background-color: #555;
         }
-        .timer-controls button:disabled {
+        .timer-controls button:disabled{
             background-color: #ccc;
             cursor: not-allowed;
         }
-        .delete-btn {
+        .delete-btn{
             padding: 5px 10px;
             background-color: #d32f2f;
             color: white;
@@ -194,94 +193,94 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             cursor: pointer;
             margin-left: 5px;
         }
-        .delete-btn:hover {
+        .delete-btn:hover{
             background-color: #b71c1c;
         }
-        .new-timer-form {
+        .new-timer-form{
             margin-top: 10px;
         }
-        .new-timer-form input, .new-timer-form button {
+        .new-timer-form input, .new-timer-form button{
             padding: 8px;
             font-size: 14px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .new-timer-form button {
+        .new-timer-form button{
             background-color: #333;
             color: white;
             border: none;
             cursor: pointer;
         }
-        .new-timer-form button:hover {
+        .new-timer-form button:hover{
             background-color: #555;
         }
-        .conversion-form {
+        .conversion-form{
             display: flex;
             gap: 10px;
             margin-top: 10px;
         }
-        .conversion-form input, .conversion-form select, .conversion-form button {
+        .conversion-form input,.conversion-form select,.conversion-form button{
             padding: 8px;
             font-size: 14px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .conversion-form button {
+        .conversion-form button{
             background-color: #333;
             color: white;
             border: none;
             cursor: pointer;
         }
-        .conversion-form button:hover {
+        .conversion-form button:hover{
             background-color: #555;
         }
-        .conversion-result {
+        .conversion-result{
             margin-top: 10px;
             font-weight: bold;
         }
-        .substitution-form {
+        .substitution-form{
             margin-top: 10px;
         }
-        .substitution-form select, .substitution-form button {
+        .substitution-form select,.substitution-form button{
             padding: 8px;
             font-size: 14px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .substitution-form button {
+        .substitution-form button{
             background-color: #333;
             color: white;
             border: none;
             cursor: pointer;
             margin-left: 10px;
         }
-        .substitution-form button:hover {
+        .substitution-form button:hover{
             background-color: #555;
         }
-        .substitution-result {
+        .substitution-result{
             margin-top: 10px;
         }
-        .print-form {
+        .print-form{
             margin-top: 10px;
             display: flex;
             gap: 10px;
         }
-        .print-form select, .print-form textarea, .print-form button {
+        .print-form select,.print-form textarea,.print-form button{
             padding: 8px;
             font-size: 14px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .print-form button {
+        .print-form button{
             background-color: #333;
             color: white;
             border: none;
             cursor: pointer;
         }
-        .print-form button:hover {
+        .print-form button:hover{
             background-color: #555;
         }
-        .print-preview {
+        .print-preview{
             margin-top: 10px;
             display: none;
             padding: 15px;
@@ -289,49 +288,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             border-radius: 5px;
             background-color: white;
         }
-        @media print {
+        @media print{
             body * {
                 visibility: hidden;
             }
-            .print-preview, .print-preview * {
+            .print-preview,.print-preview * {
                 visibility: visible;
             }
-            .print-preview {
+            .print-preview{
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100%;
             }
-            img, .ad-placeholder {
+            img, .ad-placeholder{
                 display: none !important;
             }
-            .condensed .print-details p {
+            .condensed .print-details p{
                 margin: 5px 0;
                 font-size: 12px;
             }
-            .full .print-details p {
+            .full .print-details p{
                 margin: 10px 0;
                 font-size: 14px;
             }
         }
-        .rating-section {
+        .rating-section{
             margin-top: 20px;
         }
-        .rating-section h3 {
+        .rating-section h3{
             margin: 0 0 10px;
             font-size: 18px;
         }
-        .rating-section form {
+        .rating-section form{
             margin-bottom: 10px;
         }
-        .rating-section select, .rating-section textarea {
+        .rating-section select, .rating-section textarea{
             padding: 8px;
             font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 5px;
             margin-right: 10px;
         }
-        .rating-section button {
+        .rating-section button{
             padding: 8px 15px;
             background-color: #333;
             color: white;
@@ -340,18 +339,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             font-size: 16px;
             cursor: pointer;
         }
-        .rating-section button:hover {
+        .rating-section button:hover{
             background-color: #555;
         }
-        .rating-list {
+        .rating-list{
             list-style: none;
             padding: 0;
         }
-        .rating-list li {
+        .rating-list li{
             margin: 5px 0;
             color: #666;
         }
-        .home-link {
+        .home-link{
             display: block;
             text-align: center;
             margin-top: 20px;
@@ -359,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             color: #333;
             font-weight: bold;
         }
-        .home-link:hover {
+        .home-link:hover{
             text-decoration: underline;
         }
     </style>
