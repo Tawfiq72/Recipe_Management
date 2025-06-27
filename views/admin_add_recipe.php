@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Management - Admin Panel</title>
     <style>
-        body {
+        body{
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
-        .header {
+        .header{
             background-color: #333;
             color: white;
             padding: 10px 20px;
@@ -19,50 +17,50 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header h1 {
+        .header h1{
             margin: 0;
             font-size: 24px;
         }
-        .login-section a, .login-section span {
+        .login-section a, .login-section span{
             color: white;
             text-decoration: none;
             margin-left: 10px;
         }
-        .login-section a:hover {
+        .login-section a:hover{
             text-decoration: underline;
         }
-        .container {
+        .container{
             max-width: 800px;
             margin: 50px auto;
             padding: 0 20px;
         }
-        .admin-panel {
+        .admin-panel{
             background-color: white;
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 20px;
         }
-        .admin-panel h2 {
+        .admin-panel h2{
             margin: 0 0 20px;
             font-size: 24px;
             text-align: center;
         }
-        .admin-panel label {
+        .admin-panel label{
             display: block;
             margin: 10px 0 5px;
             font-size: 16px;
         }
-        .admin-panel input, .admin-panel textarea, .admin-panel select {
+        .admin-panel input, .admin-panel textarea, .admin-panel select{
             width: 100%;
             padding: 12px;
             font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .admin-panel textarea {
+        .admin-panel textarea{
             height: 120px;
         }
-        .admin-panel button {
+        .admin-panel button{
             width: 100%;
             padding: 12px;
             background-color: #333;
@@ -73,20 +71,20 @@
             margin-top: 15px;
             cursor: pointer;
         }
-        .admin-panel button:hover {
+        .admin-panel button:hover{
             background-color: #555;
         }
-        .error {
+        .error{
             color: red;
             text-align: center;
             margin-bottom: 10px;
         }
-        .success {
+        .success{
             color: green;
             text-align: center;
             margin-bottom: 10px;
         }
-        .home-link {
+        .home-link{
             display: block;
             text-align: center;
             margin-top: 15px;
@@ -94,22 +92,22 @@
             color: #333;
             font-weight: bold;
         }
-        .home-link:hover {
+        .home-link:hover{
             text-decoration: underline;
         }
-        .ingredient-row {
+        .ingredient-row{
             display: flex;
             gap: 6px;
             margin-bottom: 10px;
             align-items: center;
         }
-        .ingredient-row input, .ingredient-row select {
+        .ingredient-row input, .ingredient-row select{
             flex: 1;
             padding: 12px;
             font-size: 16px;
             min-width: 100px;
         }
-        .remove-btn {
+        .remove-btn{
             padding: 1px 4px;
             background-color: #d32f2f;
             color: white;
@@ -123,14 +121,14 @@
             align-items: center;
             justify-content: center;
         }
-        .remove-btn:hover {
+        .remove-btn:hover{
             background-color: #b71c1c;
         }
-        .remove-btn:disabled {
+        .remove-btn:disabled{
             background-color: #e57373;
             cursor: not-allowed;
         }
-        .add-ingredient-btn {
+        .add-ingredient-btn{
             padding: 10px 20px;
             background-color: #388e3c;
             color: white;
@@ -139,57 +137,56 @@
             margin-top: 10px;
             cursor: pointer;
         }
-        .add-ingredient-btn:hover {
+        .add-ingredient-btn:hover{
             background-color: #2e7d32;
         }
-        .recipe-list {
+        .recipe-list{
             margin-top: 20px;
         }
-        .recipe-item {
+        .recipe-item{
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
-        .edit-btn,
-.delete-btn {
-    padding: 5px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-left: 6px;
-    text-decoration: none;
-    color: white;
-    font-size: 14px;
-    display: inline-block;
-    text-align: center;
-    min-width: 80px;
-    height: 34px;
-    line-height: 34px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-}
+        .edit-btn,.delete-btn{
+            padding: 5px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 6px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            display: inline-block;
+            text-align: center;
+            min-width: 80px;
+            height: 34px;
+            line-height: 34px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
 
-.edit-btn {
-    background-color: #1976d2;
-}
+        .edit-btn{
+            background-color: #1976d2;
+        }
 
-.edit-btn:hover {
-    background-color: #1565c0;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
-}
+        .edit-btn:hover{
+            background-color: #1565c0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
+        }
 
-.delete-btn {
-    background-color: #d32f2f;
-}
+        .delete-btn{
+            background-color: #d32f2f;
+        }
 
-.delete-btn:hover {
-    background-color: #b71c1c;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(183, 28, 28, 0.3);
-}
+        .delete-btn:hover{
+            background-color: #b71c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(183, 28, 28, 0.3);
+        }
 
     </style>
 </head>
