@@ -1,3 +1,77 @@
+<?php
+session_start();
+
+// Include database connection and controller
+require_once '../config/db.php';
+require_once '../controllers/RecipeController.php';
+
+// Initialize controller
+$controller = new RecipeController($conn);
+
+// Get recipe ID from URL
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$recipe = $controller->getRecipe($id);
+
+if (!$recipe) {
+    die("Recipe not found.");
+}
+
+// Handle rating submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['rating'])) {
+    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+    $rating = (float)$_POST['rating'];
+    $review = isset($_POST['review']) ? trim($_POST['review']) : null;
+    $result = $controller->submitRating($id, $user_id, $rating, $review);
+    if ($result === true) {
+        header("Refresh:0"); // Refresh to show updated rating
+    } else {
+        $error = $result;
+    }
+}
+
+$ratings = $controller->getRatings($id);
+$average_rating = $controller->getAverageRating($id);
+
+// Fetch existing timers for the recipe and user
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+$timers = [];
+if ($user_id) {
+    $query = "SELECT id, label, duration FROM timers WHERE user_id = ? AND recipe_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "ii", $user_id, $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $timers[] = $row;
+    }
+}
+
+// Handle new timer submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_timer_duration'])) {
+    $label = $_POST['new_timer_label'] ?: "Step " . (count($timers) + 1);
+    $duration_minutes = (int)$_POST['new_timer_duration'];
+    if ($duration_minutes > 0) {
+        $duration_seconds = $duration_minutes * 60; // Convert minutes to seconds
+        $query = "INSERT INTO timers (user_id, recipe_id, duration, label) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "iiis", $user_id, $id, $duration_seconds, $label);
+        mysqli_stmt_execute($stmt);
+        header("Refresh:0"); // Refresh to show new timer
+    }
+}
+
+// Handle timer deletion
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
+    $timer_id = (int)$_POST['delete_timer_id'];
+    $query = "DELETE FROM timers WHERE id = ? AND user_id = ? AND recipe_id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "iii", $timer_id, $user_id, $id);
+    mysqli_stmt_execute($stmt);
+    header("Refresh:0"); // Refresh to remove deleted timer
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
