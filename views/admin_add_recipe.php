@@ -1,3 +1,96 @@
+<?php 
+session_start();
+if(!isset($_SESSION['role']) || $_SESSION['role']!='admin'){
+    header("Location:login.php");
+    exit();
+}
+require_once '../config/db.php';
+require_once '../controllers/RecipeController.php';
+$controller=new RecipeController($conn);
+
+$cuisines_query="SELECT id,name FROM cuisines";
+$cuisines_result=mysqli_query($conn,$cuisines_query);
+$cuisines=mysqli_feltch_all($cuisines_result,MYSQLI_ASSOC);
+
+
+$meal_types_query="SELECT id,name FROM meal_types";
+$meal_types_result=mysqli_query($conn,$meal_types_query);
+$meal_types=mysqli_feltch_all($meal_types_result,MYSQLI_ASSOC);
+
+
+$error='';
+$success='';
+$edit_mode=false;
+$edit_recipe=null;
+if($_SERVER['REQUEST_METHOD']=='POST'){
+    $id=isset($_POST['id'])?(int)$_POST['id']:null;
+    $title=$_POST['title'];
+    $description=$_POST['description'];
+    $details=$_POST['details'];
+    $servings=(int)$_POST['servings'];
+    $cuisine_id=(int)$_POST['cuisine_id'];
+    $meal_type_id=(int)$_POST['meal_type_id'];
+    $image=$_FILES['image'];
+    $ingredients=[
+        'name'=>$_POST['ingredient_name'],
+        'quantity'=>$_POST['ingredient_quantity'],
+        'unit'=>$_POST['ingredient_unit']
+    ];
+
+    if($id){
+        
+        $result=$controller->updateRecipe($id,$title,$description,$details,$servings,$cuisine_id,$meal_type_id,$image,$ingredients);
+        if ($result===true){
+            $success="Recipe updated successfully";
+            header("Refresh:2;url=admin_add_recipe.php");
+        }
+        else{
+            $error=$result;
+            $edit_recipe=$controller->getRecipe($id);
+            $edit_mode=true;
+        }
+    } 
+    else{
+        $result=$controller->addRecipe($title,$description,$details,$servings,$cuisine_id,$meal_type_id,$image,$ingredients);
+        if($result===true){
+            $success="Recipe added successfully";
+            header("Refresh:2;url=admin_add_recipe.php");
+        } 
+        else{
+            $error=$result;
+        }
+    }
+}
+if(isset($_GET['edit'])&&!isset($_POST['id'])){
+    $edit_id=(int)$_GET['edit'];
+    $edit_recipe=$controller->getRecipe($edit_id);
+    if($edit_recipe){
+        $edit_mode=true;
+    }
+     else{
+        $error="Recipe not found";
+    }
+}
+if (isset($_GET['delete'])&& isset($_GET['id'])){
+    $id=(int)$_GET['id'];
+    $result=$controller->deleteRecipe($id);
+    if($result===true) {
+        $success="Recipe deleted successfully";
+        header("Refresh:2;url=admin_add_recipe.php");
+    } 
+    else{
+        $error=$result;
+    }
+}
+
+
+$recipes = $controller->getRecipes();
+
+
+
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
