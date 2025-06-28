@@ -4,7 +4,6 @@ session_start();
 require_once '../config/db.php';
 require_once '../controllers/RecipeController.php';
 
-
 $controller = new RecipeController($conn);
 
 // Fetch cuisines and meal types for dropdowns
@@ -19,9 +18,10 @@ $meal_types = mysqli_fetch_all($meal_types_result, MYSQLI_ASSOC);
 // Handle filter submission
 $cuisine_id = isset($_GET['cuisine_id']) ? (int)$_GET['cuisine_id'] : null;
 $meal_type_id = isset($_GET['meal_type_id']) ? (int)$_GET['meal_type_id'] : null;
+$search_term = isset($_GET['search_term']) ? $_GET['search_term'] : null;
 
 if (isset($_GET['filter'])) {
-    $recipes = $controller->getFilteredRecipes($cuisine_id, $meal_type_id);
+    $recipes = $controller->getFilteredRecipes($cuisine_id, $meal_type_id, $search_term);
 } else {
     $recipes = $controller->getRecipes();
 }
@@ -77,21 +77,23 @@ if (isset($_GET['filter'])) {
             gap: 10px;
             transition: all 0.3s ease;
         }
-
-        .filter-section select{
+        .filter-section label {
+            margin-right: 5px;
+            font-size: 16px;
+            color: #333;
+        }
+        .filter-section select, .filter-section input[type="text"]{
             padding: 10px;
             font-size: 16px;
             border: 1px solid #bbb;
             border-radius: 8px;
             transition: border 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .filter-section select:focus{
+        .filter-section select:focus, .filter-section input[type="text"]:focus{
             border-color: #666;
             box-shadow: 0 0 5px rgba(100, 100, 100, 0.3);
             outline: none;
         }
-
         .filter-section button{
             padding: 10px 20px;
             background-color: #333;
@@ -102,19 +104,16 @@ if (isset($_GET['filter'])) {
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
-
         .filter-section button:hover{
             background-color: #555;
             transform: translateY(-2px);
         }
-
         .recipe-grid{
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             padding: 10px;
         }
-
         .recipe-card{
             background-color: #fff;
             border: 1px solid #ddd;
@@ -124,12 +123,10 @@ if (isset($_GET['filter'])) {
             transition: box-shadow 0.3s ease, transform 0.3s ease;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-
         .recipe-card:hover{
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transform: translateY(-5px);
         }
-
         .recipe-card img{
             max-width: 100%;
             height: 200px;
@@ -137,19 +134,16 @@ if (isset($_GET['filter'])) {
             border-radius: 8px;
             margin-bottom: 10px;
         }
-
         .recipe-card h3{
             margin: 10px 0 5px;
             font-size: 20px;
             color: #222;
         }
-
         .recipe-card p{
             margin: 5px 0;
             color: #555;
             font-size: 14px;
         }
-
         .admin-link{
             display: block;
             margin-top: 30px;
@@ -160,12 +154,10 @@ if (isset($_GET['filter'])) {
             font-size: 16px;
             transition: color 0.3s ease;
         }
-
         .admin-link:hover{
             color: #1a252f;
             text-decoration: underline;
         }
-
     </style>
 </head>
 <body>
@@ -183,7 +175,8 @@ if (isset($_GET['filter'])) {
     <div class="container">
         <div class="filter-section">
             <form method="get" action="">
-                <select name="cuisine_id" onchange="this.form.submit()">
+                <label for="cuisine_id">Cuisine:</label>
+                <select id="cuisine_id" name="cuisine_id">
                     <option value="">All Cuisines</option>
                     <?php foreach ($cuisines as $cuisine): ?>
                         <option value="<?php echo $cuisine['id']; ?>" <?php echo $cuisine_id == $cuisine['id'] ? 'selected' : ''; ?>>
@@ -191,7 +184,8 @@ if (isset($_GET['filter'])) {
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <select name="meal_type_id" onchange="this.form.submit()">
+                <label for="meal_type_id">Meal Type:</label>
+                <select id="meal_type_id" name="meal_type_id">
                     <option value="">All Meal Types</option>
                     <?php foreach ($meal_types as $meal_type): ?>
                         <option value="<?php echo $meal_type['id']; ?>" <?php echo $meal_type_id == $meal_type['id'] ? 'selected' : ''; ?>>
@@ -199,7 +193,10 @@ if (isset($_GET['filter'])) {
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <label for="search_term">Search:</label>
+                <input type="text" id="search_term" name="search_term" placeholder="Search by recipe title" value="<?php echo isset($_GET['search_term']) ? htmlspecialchars($_GET['search_term']) : ''; ?>">
                 <input type="hidden" name="filter" value="1">
+                <button type="submit">Apply Filters</button>
             </form>
         </div>
         <div class="recipe-grid">
