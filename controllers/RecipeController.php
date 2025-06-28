@@ -25,7 +25,7 @@ class RecipeController{
     public function addRecipe($title,$description,$details,$servings,$cuisine_id,$meal_type_id,$image,$ingredients){
         $image_path=null;
         if($image['name']){
-            $targer_dir="../uploads/";
+            $target_dir="../uploads/";
             $image_ext=strtolower(pathinfo($image['name'],PATHINFO_EXTENSION));
             $allowed_exts=['jpg','jpeg','png'];
             if(!in_array($image_ext,$allowed_exts)){
@@ -35,9 +35,9 @@ class RecipeController{
             if($image['size']>5000000){
                 return "Image size is too large (MAX 5MB)";
             }
-            $unique_name=uniqid().'.'$image_ext;
-            $image_path='/recipe_management/uploads/',$unique_name;
-            if(!move_uploaded_file($image['tmp_name'],$targer_dir,$unique_name)){
+            $unique_name=uniqid().'.'.$image_ext;
+            $image_path='/recipe_management/uploads/'.$unique_name;
+            if(!move_uploaded_file($image['tmp_name'],$target_dir.$unique_name)){
                 return "Failed to upload image.";
             }
         }
@@ -62,7 +62,7 @@ class RecipeController{
                 return "At leas one valid ingredient is required";
             }
             if(!this->recipeModel->addIngredients($recipe_id,$ingredient_data)){
-                return "Failed to save ingredients"
+                return "Failed to save ingredients";
             }
         }
            
@@ -76,7 +76,7 @@ class RecipeController{
     public function updateRecipe($id,$title,$description,$details,$servings,$cuisine_id,$meal_type_id,$image,$ingredients){
          $image_path=null;
         if($image['name']){
-            $targer_dir="../uploads/";
+            $target_dir="../uploads/";
             $image_ext=strtolower(pathinfo($image['name'],PATHINFO_EXTENSION));
             $allowed_exts=['jpg','jpeg','png'];
             if(!in_array($image_ext,$allowed_exts)){
@@ -86,9 +86,9 @@ class RecipeController{
             if($image['size']>5000000){
                 return "Image size is too large (MAX 5MB)";
             }
-            $unique_name=uniqid().'.'$image_ext;
-            $image_path='/recipe_management/uploads/',$unique_name;
-            if(!move_uploaded_file($image['tmp_name'],$targer_dir,$unique_name)){
+            $unique_name=uniqid().'.'.$image_ext;
+            $image_path='/recipe_management/uploads/'.$unique_name;
+            if(!move_uploaded_file($image['tmp_name'],$target_dir.$unique_name)){
                 return "Failed to upload image.";
             }
         }
@@ -112,7 +112,7 @@ class RecipeController{
                 return "At leas one valid ingredient is required";
             }
             if(!this->recipeModel->addIngredients($recipe_id,$ingredient_data)){
-                return "Failed to save ingredients"
+                return "Failed to save ingredients";
             }
         }
 
