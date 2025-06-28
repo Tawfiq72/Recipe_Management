@@ -243,22 +243,23 @@ $recipes = $controller->getRecipes();
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
-        .edit-btn,.delete-btn{
-            padding: 8px 15px;
+        .edit-btn, .delete-btn {
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            color:white;
+            color: white;
             text-decoration: none;
-            line-height:36px;
             font-size: 14px;
-            display: inline-block;
-            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 90px;
             height: 36px;
             box-shadow: 0 4px 6px rgba(175, 21, 21, 0.64);
             transition: all 0.3s ease;
+            padding: 0 15px;
         }
+
 
         .edit-btn{
             background-color: #1976d2;
@@ -305,7 +306,7 @@ $recipes = $controller->getRecipes();
             <?php if ($success): ?>
                 <p class="success"><?php echo $success; ?></p>
             <?php endif; ?>
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="" method="post">
                 <input type="hidden" name="id" value="<?php echo $edit_mode ? $edit_recipe['id'] : ''; ?>">
                 <label for="title">Title</label>
                 <input type="text" id="title" name="title" value="<?php echo $edit_mode ? htmlspecialchars($edit_recipe['title']) : ''; ?>" required>

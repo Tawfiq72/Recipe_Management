@@ -7,13 +7,13 @@ require_once '../controllers/RecipeController.php';
 $controller = new RecipeController($conn);
 
 // Fetch cuisines and meal types for dropdowns
-$cuisines_query = "SELECT id, name FROM cuisines";
-$cuisines_result = mysqli_query($conn, $cuisines_query);
-$cuisines = mysqli_fetch_all($cuisines_result, MYSQLI_ASSOC);
+$cuisines_query="SELECT id, name FROM cuisines";
+$cuisines_result=mysqli_query($conn, $cuisines_query);
+$cuisines=mysqli_fetch_all($cuisines_result, MYSQLI_ASSOC);
 
-$meal_types_query = "SELECT id, name FROM meal_types";
-$meal_types_result = mysqli_query($conn, $meal_types_query);
-$meal_types = mysqli_fetch_all($meal_types_result, MYSQLI_ASSOC);
+$meal_types_query="SELECT id, name FROM meal_types";
+$meal_types_result=mysqli_query($conn, $meal_types_query);
+$meal_types=mysqli_fetch_all($meal_types_result, MYSQLI_ASSOC);
 
 // Fetch counts for admin statistics
 $total_users_query="SELECT COUNT(*) as total_users FROM users";
@@ -30,14 +30,14 @@ $total_recipes=mysqli_fetch_assoc($total_recipes_result)['total_recipes'];
  
 
 // Handle filter submission
-$cuisine_id = isset($_GET['cuisine_id']) ? (int)$_GET['cuisine_id'] : null;
-$meal_type_id = isset($_GET['meal_type_id']) ? (int)$_GET['meal_type_id'] : null;
-$search_term = isset($_GET['search_term']) ? $_GET['search_term'] : null;
+$cuisine_id=isset($_GET['cuisine_id']) ? (int)$_GET['cuisine_id'] : null;
+$meal_type_id=isset($_GET['meal_type_id']) ? (int)$_GET['meal_type_id'] : null;
+$search_term=isset($_GET['search_term']) ? $_GET['search_term'] : null;
 
 if (isset($_GET['filter'])) {
-    $recipes = $controller->getFilteredRecipes($cuisine_id, $meal_type_id, $search_term);
+    $recipes=$controller->getFilteredRecipes($cuisine_id, $meal_type_id, $search_term);
 } else {
-    $recipes = $controller->getRecipes();
+    $recipes=$controller->getRecipes();
 }
 ?>
 
@@ -48,26 +48,26 @@ if (isset($_GET['filter'])) {
     <style>
         body{
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            margin:0;
+            padding:0;
             background-color: #f4f4f4;
         }
         .header{
             background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            color:white;
+            padding:10px 20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
         }
         .header h1{
-            margin: 0;
-            font-size: 24px;
+            margin:0;
+            font-size:24px;
         }
         .login-section a,.login-section span{
-            color: white;
-            text-decoration: none;
-            margin-left: 10px;
+            color:white;
+            text-decoration:none;
+            margin-left:10px;
         }
         .login-section a:hover{
             text-decoration: underline;
