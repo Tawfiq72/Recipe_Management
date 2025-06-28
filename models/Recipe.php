@@ -31,11 +31,11 @@ class Recipe {
                   WHERE 1=1";
         $params=[];
         if ($cuisine_id){
-            $query.="AND r.cuisine_id=?";
+            $query.=" AND r.cuisine_id=?";
             
         }
         if ($meal_type_id){
-            $query.="AND r.meal_type_id=?";
+            $query.=" AND r.meal_type_id=?";
             
         }
         $stmt=mysqli_prepare($this->conn,$query);

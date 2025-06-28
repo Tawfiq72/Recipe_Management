@@ -15,7 +15,7 @@ class RecipeController{
         return $this->recipeModel->getAllRecipes();
     }
     public function getFilteredRecipes($cuisine_id=null,$meal_type_id=null){
-        return $this->getFilteredRecipes($cuisine_id,$meal_type_id);
+        return $this->recipeModel->getFilteredRecipes($cuisine_id,$meal_type_id);
     }
 
     public function getRecipe($id){
