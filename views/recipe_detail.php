@@ -14,21 +14,31 @@ if (!$recipe) {
     die("Recipe not found.");
 }
 
-// Handle rating submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['rating'])) {
+// Handle timer submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_timer_duration'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
-    $rating = (float)$_POST['rating'];
-    $review = isset($_POST['review']) ? trim($_POST['review']) : null;
-    $result = $controller->submitRating($id, $user_id, $rating, $review);
-    if ($result === true) {
-        header("Refresh:0"); // Refresh to show updated rating
-    } else {
-        $error = $result;
+    $label = $_POST['new_timer_label'] ?: "Step " . (count($timers) + 1);
+    $duration_minutes = (int)$_POST['new_timer_duration'];
+    if ($duration_minutes > 0 && $user_id) {
+        $duration_seconds = $duration_minutes * 60; // Convert minutes to seconds
+        $query = "INSERT INTO timers (user_id, recipe_id, duration, label) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "iiis", $user_id, $id, $duration_seconds, $label);
+        mysqli_stmt_execute($stmt);
+        header("Refresh:0"); // Refresh to show new timer
     }
 }
 
-$ratings = $controller->getRatings($id);
-$average_rating = $controller->getAverageRating($id);
+// Handle timer deletion
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
+    $timer_id = (int)$_POST['delete_timer_id'];
+    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+    $query = "DELETE FROM timers WHERE id = ? AND user_id = ? AND recipe_id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "iii", $timer_id, $user_id, $id);
+    mysqli_stmt_execute($stmt);
+    header("Refresh:0"); // Refresh to remove deleted timer
+}
 
 // Fetch existing timers for the recipe and user
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
@@ -44,29 +54,8 @@ if ($user_id) {
     }
 }
 
-// Handle new timer submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_timer_duration'])) {
-    $label = $_POST['new_timer_label'] ?: "Step " . (count($timers) + 1);
-    $duration_minutes = (int)$_POST['new_timer_duration'];
-    if ($duration_minutes > 0) {
-        $duration_seconds = $duration_minutes * 60; // Convert minutes to seconds
-        $query = "INSERT INTO timers (user_id, recipe_id, duration, label) VALUES (?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "iiis", $user_id, $id, $duration_seconds, $label);
-        mysqli_stmt_execute($stmt);
-        header("Refresh:0"); // Refresh to show new timer
-    }
-}
-
-// Handle timer deletion
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
-    $timer_id = (int)$_POST['delete_timer_id'];
-    $query = "DELETE FROM timers WHERE id = ? AND user_id = ? AND recipe_id = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "iii", $timer_id, $user_id, $id);
-    mysqli_stmt_execute($stmt);
-    header("Refresh:0"); // Refresh to remove deleted timer
-}
+$ratings = $controller->getRatings($id);
+$average_rating = $controller->getAverageRating($id);
 ?>
 
 <!DOCTYPE html>
@@ -131,59 +120,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             background-color: #c0392b;
         }
 
-        .search-filter {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .search-bar {
-            flex: 1;
-            margin-right: 20px;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .filter-select {
-            display: flex;
-            gap: 20px;
-        }
-
-        .filter-select select {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
         .recipe-card {
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .recipe-card img {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            border-bottom: 1px solid #ddd;
-            border-radius: 10px 10px 0 0;
         }
 
         .recipe-card h2 {
-            margin: 15px 0;
+            margin: 15px 20px;
             font-size: 28px;
             color: #333;
+            text-align: center;
         }
 
         .recipe-content {
@@ -200,7 +149,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             width: 100%;
             height: auto;
             border-radius: 10px;
-            border: none;
         }
 
         .recipe-details {
@@ -249,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
         }
 
         .rating-section {
-            margin: 20px;
+            margin: 20px 0;
             padding: 20px;
             background-color: #f9f9f9;
             border-radius: 10px;
@@ -301,15 +249,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             font-size: 16px;
         }
 
-        .timer-section, .conversion-section, .substitution-section, .print-section {
-            margin: 20px;
+        .rating-list li p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .timer-section, .conversion-section, .substitution-section {
+            margin: 20px 0;
             padding: 15px;
             background-color: #f9f9f9;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .timer-section h3, .conversion-section h3, .substitution-section h3, .print-section h3 {
+        .timer-section h3, .conversion-section h3, .substitution-section h3 {
             margin: 0 0 10px;
             font-size: 20px;
             color: #333;
@@ -369,20 +322,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             background-color: #c0392b;
         }
 
-        .new-timer-form, .conversion-form, .substitution-form, .print-form {
+        .new-timer-form, .conversion-form, .substitution-form {
             margin-top: 10px;
             display: flex;
             gap: 10px;
         }
 
-        .new-timer-form input, .conversion-form input, .substitution-form select, .print-form select, .print-form textarea {
+        .new-timer-form input, .conversion-form input, .substitution-form select {
             padding: 8px;
             font-size: 14px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
 
-        .new-timer-form button, .conversion-form button, .substitution-form button, .print-form button {
+        .new-timer-form button, .conversion-form button, .substitution-form button {
             padding: 8px 15px;
             background-color: #2c3e50;
             color: white;
@@ -392,7 +345,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             transition: background-color 0.3s;
         }
 
-        .new-timer-form button:hover, .conversion-form button:hover, .substitution-form button:hover, .print-form button:hover {
+        .new-timer-form button:hover, .conversion-form button:hover, .substitution-form button:hover {
             background-color: #34495e;
         }
 
@@ -402,38 +355,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             color: #333;
         }
 
-        .print-preview {
-            margin-top: 10px;
-            display: none;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: white;
-        }
-
         @media print {
             body * {
                 visibility: hidden;
             }
-            .print-preview, .print-preview * {
+            .recipe-card, .recipe-card * {
                 visibility: visible;
             }
-            .print-preview {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
+            .recipe-card {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
             }
-            img, .ad-placeholder {
-                display: none !important;
+            .header, .back-button, .timer-section, .conversion-section, .substitution-section, .print-button {
+                display: none;
             }
-            .condensed .print-details p {
-                margin: 5px 0;
-                font-size: 12px;
+            .recipe-content {
+                display: block;
             }
-            .full .print-details p {
-                margin: 10px 0;
-                font-size: 14px;
+            .recipe-image {
+                float: left;
+                width: 30%;
+                padding: 10px;
+            }
+            .recipe-details {
+                width: 65%;
+                float: right;
+                padding: 10px;
+            }
+            .rating-section form, .rating-section ul, .rating-section h3 {
+                display: none;
+            }
+            .rating-section p {
+                visibility: visible;
             }
         }
     </style>
@@ -461,36 +416,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
                 <div class="recipe-details">
                     <p><strong>Cuisine:</strong> <?php echo htmlspecialchars($recipe['cuisine']); ?></p>
                     <p><strong>Meal Type:</strong> <?php echo htmlspecialchars($recipe['meal_type']); ?></p>
-                    <div class="rating-section">
-                        <h3>Ratings & Reviews</h3>
-                        <p><strong>Average Rating:</strong> <?php echo $average_rating ? number_format($average_rating, 1) : 'N/A'; ?> / 5</p>
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <form method="post" action="" onsubmit="return validateRating()">
-                                <select name="rating" required>
-                                    <option value="">Select Rating</option>
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                                <textarea name="review" placeholder="Add a review (optional)"></textarea>
-                                <button type="submit">Submit Rating</button>
-                            </form>
-                        <?php else: ?>
-                            <p>Please <a href="login.php">login</a> to rate this recipe.</p>
-                        <?php endif; ?>
-                        <?php if (!empty($error)): ?>
-                            <p style="color: red;"><?php echo $error; ?></p>
-                        <?php endif; ?>
-                        <?php if (!empty($ratings)): ?>
-                            <ul class="rating-list">
-                                <?php foreach ($ratings as $rating): ?>
-                                    <li><?php echo htmlspecialchars($rating['username']); ?>: <?php echo $rating['rating']; ?> / 5</li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php else: ?>
-                            <p>No ratings yet.</p>
-                        <?php endif; ?>
-                    </div>
                     <p><strong>Servings:</strong> <?php echo htmlspecialchars($recipe['servings']); ?></p>
                     <p><strong>Description:</strong> <?php echo htmlspecialchars($recipe['description']); ?></p>
                     <p><strong>Details:</strong> <?php echo nl2br(htmlspecialchars($recipe['details'])); ?></p>
@@ -505,6 +430,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
                         <p>No ingredients listed for this recipe.</p>
                     <?php endif; ?>
                     <a href="#" class="print-button" onclick="window.print()">Print Recipe</a>
+                    <div class="rating-section">
+                        <h3>Ratings & Reviews</h3>
+                        <p><strong>Average Rating:</strong> <?php echo $average_rating ? number_format($average_rating, 1) : 'N/A'; ?> / 5</p>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <form id="ratingForm" method="post" onsubmit="return submitRating(event)">
+                                <select name="rating" required>
+                                    <option value="">Select Rating</option>
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                                <textarea name="review" placeholder="Add a review (optional)"></textarea>
+                                <button type="submit">Submit Rating</button>
+                            </form>
+                        <?php else: ?>
+                            <p>Please <a href="login.php">Login</a> to rate this recipe.</p>
+                        <?php endif; ?>
+                        <?php if (!empty($error)): ?>
+                            <p style="color: red;" id="ratingError"><?php echo $error; ?></p>
+                        <?php endif; ?>
+                        <ul class="rating-list" id="ratingList">
+                            <?php if (!empty($ratings)): ?>
+                                <?php foreach ($ratings as $rating): ?>
+                                    <li>
+                                        <strong><?php echo htmlspecialchars($rating['username']); ?>:</strong> <?php echo $rating['rating']; ?> / 5
+                                        <?php if (!empty($rating['review'])): ?>
+                                            <p><?php echo htmlspecialchars($rating['review']); ?></p>
+                                        <?php endif; ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p>No ratings yet.</p>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -534,7 +494,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
                     <button type="submit">Add Timer</button>
                 </form>
             <?php else: ?>
-                <p>Please <a href="login.php">login</a> to add timers.</p>
+                <p>Please <a href="login.php">Login</a> to add timers.</p>
             <?php endif; ?>
         </div>
         <div class="conversion-section">
@@ -572,7 +532,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             </form>
             <div class="substitution-result" id="substitutionResult"></div>
         </div>
-        
     </div>
     <script>
         // Debug logging
@@ -601,9 +560,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
         }
 
         document.querySelectorAll('.startTimer').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent any form submission
                 const id = this.dataset.id;
                 if (!timers[id].isRunning) {
+                    // Start timer immediately
+                    timers[id].isRunning = true;
+                    this.disabled = true;
+                    document.querySelector(`.pauseTimer[data-id="${id}"]`).disabled = false;
+                    
                     timers[id].interval = setInterval(() => {
                         if (timers[id].remaining > 0) {
                             timers[id].remaining--;
@@ -616,9 +581,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
                             alert(`${document.querySelector(`.timer-item[data-id="${id}"] span:nth-child(2)`).textContent} is complete!`);
                         }
                     }, 1000);
-                    timers[id].isRunning = true;
-                    this.disabled = true;
-                    document.querySelector(`.pauseTimer[data-id="${id}"]`).disabled = false;
+
+                    // Validate timer with AJAX in the background
+                    fetch('start_timer.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `timer_id=${id}`
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.success) {
+                            // Stop timer if validation fails
+                            clearInterval(timers[id].interval);
+                            timers[id].isRunning = false;
+                            timers[id].remaining = timers[id].duration;
+                            updateDisplay(id);
+                            this.disabled = false;
+                            document.querySelector(`.pauseTimer[data-id="${id}"]`).disabled = true;
+                            alert('Error starting timer: ' + (result.error || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        // Stop timer on network error
+                        clearInterval(timers[id].interval);
+                        timers[id].isRunning = false;
+                        timers[id].remaining = timers[id].duration;
+                        updateDisplay(id);
+                        this.disabled = false;
+                        document.querySelector(`.pauseTimer[data-id="${id}"]`).disabled = true;
+                        alert('Network error: Unable to validate timer');
+                    });
                 }
             });
         });
@@ -647,34 +639,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             });
         });
 
-        function searchRecipes() {
-            const searchTerm = document.getElementById('searchInput').value.trim();
-            if (searchTerm.length < 2) {
-                alert('Please enter at least 2 characters to search.');
-                return;
-            }
-            // Add search logic here if connected to a search endpoint
-            console.log('Searching for:', searchTerm);
-        }
-
-        function filterRecipes() {
-            const cuisine = document.getElementById('cuisineFilter').value;
-            const mealType = document.getElementById('mealTypeFilter').value;
-            if (!cuisine && !mealType) {
-                alert('Please select at least one filter option.');
-                return;
-            }
-            // Add filter logic here if connected to a filter endpoint
-            console.log('Filtering by cuisine:', cuisine, 'and meal type:', mealType);
-        }
-
-        function validateRating() {
-            const rating = document.querySelector('select[name="rating"]').value;
+        async function submitRating(event) {
+            event.preventDefault();
+            const form = document.getElementById('ratingForm');
+            const rating = form.querySelector('select[name="rating"]').value;
+            const review = form.querySelector('textarea[name="review"]').value;
+            const recipeId = <?php echo $id; ?>;
+            
             if (!rating) {
                 alert('Please select a rating before submitting.');
                 return false;
             }
-            return true;
+
+            const response = await fetch('submit_rating.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `recipe_id=${recipeId}&rating=${rating}&review=${encodeURIComponent(review)}`
+            });
+            const result = await response.json();
+            
+            const errorElement = document.getElementById('ratingError');
+            const ratingList = document.getElementById('ratingList');
+            
+            if (result.success) {
+                // Update average rating
+                document.querySelector('.rating-section p').textContent = `Average Rating: ${result.average_rating} / 5`;
+                
+                // Update ratings list
+                if (result.ratings.length > 0) {
+                    ratingList.innerHTML = '';
+                    result.ratings.forEach(rating => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${rating.username}:</strong> ${rating.rating} / 5` + 
+                            (rating.review ? `<p>${rating.review}</p>` : '');
+                        ratingList.appendChild(li);
+                    });
+                } else {
+                    ratingList.innerHTML = '<p>No ratings yet.</p>';
+                }
+                
+                // Clear form
+                form.reset();
+                if (errorElement) errorElement.remove();
+            } else {
+                if (errorElement) {
+                    errorElement.textContent = result.error;
+                } else {
+                    const p = document.createElement('p');
+                    p.id = 'ratingError';
+                    p.style.color = 'red';
+                    p.textContent = result.error;
+                    form.after(p);
+                }
+            }
+            
+            return false;
         }
 
         function validateTimer() {
@@ -734,22 +753,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
             const result = substitutions[ingredient] || "No substitution available for this ingredient.";
             document.getElementById('substitutionResult').innerHTML = `<strong>${ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}:</strong> ${result}`;
         }
-
-        function updatePrintPreview(event) {
-            if (event) event.preventDefault();
-            const layout = document.getElementById('layoutSelector').value;
-            const notes = document.getElementById('customNotes').value;
-            const preview = document.getElementById('printPreview');
-            const printNotes = document.getElementById('printNotes');
-
-            preview.className = `print-preview ${layout}`;
-            printNotes.textContent = notes || "No notes added.";
-            preview.style.display = 'block';
-        }
-
-        window.onload = function() {
-            updatePrintPreview();
-        };
     </script>
 </body>
 </html>
