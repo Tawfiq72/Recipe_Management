@@ -10,12 +10,12 @@ $controller=new RecipeController($conn);
 
 $cuisines_query="SELECT id,name FROM cuisines";
 $cuisines_result=mysqli_query($conn,$cuisines_query);
-$cuisines=mysqli_feltch_all($cuisines_result,MYSQLI_ASSOC);
+$cuisines=mysqli_fetch_all($cuisines_result,MYSQLI_ASSOC);
 
 
 $meal_types_query="SELECT id,name FROM meal_types";
 $meal_types_result=mysqli_query($conn,$meal_types_query);
-$meal_types=mysqli_feltch_all($meal_types_result,MYSQLI_ASSOC);
+$meal_types=mysqli_fetch_all($meal_types_result,MYSQLI_ASSOC);
 
 
 $error='';

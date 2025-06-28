@@ -61,7 +61,7 @@ class RecipeController{
             if(empty($ingredient_data)){
                 return "At leas one valid ingredient is required";
             }
-            if(!this->recipeModel->addIngredients($recipe_id,$ingredient_data)){
+            if(!$this->recipeModel->addIngredients($recipe_id,$ingredient_data)){
                 return "Failed to save ingredients";
             }
         }
