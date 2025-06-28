@@ -16,9 +16,23 @@ $meal_types_query = "SELECT id, name FROM meal_types";
 $meal_types_result = mysqli_query($conn, $meal_types_query);
 $meal_types = mysqli_fetch_all($meal_types_result, MYSQLI_ASSOC);
 
+// Fetch counts for admin statistics
+$total_users_query="SELECT COUNT(*) as total_users FROM users";
+$total_users_result=mysqli_query($conn,$total_users_query);
+$total_users=mysqli_fetch_assoc($total_users_result)['total_users'];
+ 
+$total_reviews_query="SELECT COUNT(*) as total_reviews FROM ratings";
+$total_reviews_result=mysqli_query($conn, $total_reviews_query);
+$total_reviews=mysqli_fetch_assoc($total_reviews_result)['total_reviews'];
+ 
+$total_recipes_query="SELECT COUNT(*) as total_recipes FROM recipes";
+$total_recipes_result=mysqli_query($conn, $total_recipes_query);
+$total_recipes=mysqli_fetch_assoc($total_recipes_result)['total_recipes'];
+ 
+
 // Handle filter submission
-$cuisine_id = isset($_GET['cuisine_id']) ? (int)$_GET['cuisine_id'] : null;
-$meal_type_id = isset($_GET['meal_type_id']) ? (int)$_GET['meal_type_id'] : null;
+$cuisine_id=isset($_GET['cuisine_id']) ? (int)$_GET['cuisine_id']:null;
+$meal_type_id=isset($_GET['meal_type_id']) ? (int)$_GET['meal_type_id']:null;
 
 if (isset($_GET['filter'])) {
     $recipes = $controller->getFilteredRecipes($cuisine_id, $meal_type_id);
@@ -63,34 +77,78 @@ if (isset($_GET['filter'])) {
             margin: 20px auto;
             padding: 0 20px;
         }
+
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .dashboard-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        .dashboard-card.blue {
+            background-color: #4a90e2;
+            color: white;
+        }
+        .dashboard-card.red {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .dashboard-card.green {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .dashboard-card.black {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .dashboard-card.gray {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .dashboard-card h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+        .dashboard-card p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+
+
         .filter-section{
             margin-bottom: 20px;
             background-color: white;
             padding: 20px;
             border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            transition: all 0.3s ease;
+            border-radius: 5px;
+            
         }
 
         .filter-section select{
-            padding: 10px;
+            margin-bottom:20px;
+            background-color:white;
+
+            padding:15px;
             font-size: 16px;
-            border: 1px solid #bbb;
-            border-radius: 8px;
-            transition: border 0.3s ease, box-shadow 0.3s ease;
+            border:1px solid #ddd;
+            border-radius: 5px;
+            
         }
 
-        .filter-section select:focus{
-            border-color: #666;
-            box-shadow: 0 0 5px rgba(100, 100, 100, 0.3);
-            outline: none;
-        }
 
         .filter-section button{
             padding: 10px 20px;
@@ -100,35 +158,30 @@ if (isset($_GET['filter'])) {
             border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+
         }
 
         .filter-section button:hover{
             background-color: #555;
-            transform: translateY(-2px);
         }
 
         .recipe-grid{
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            padding: 10px;
+            gap: 20px;
+            
         }
 
         .recipe-card{
             background-color: #fff;
             border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 5px;
+            padding: 15px;
             text-align: center;
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        
         }
 
-        .recipe-card:hover{
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transform: translateY(-5px);
-        }
+       
 
         .recipe-card img{
             max-width: 100%;
@@ -157,12 +210,11 @@ if (isset($_GET['filter'])) {
             text-decoration: none;
             color: #2c3e50;
             font-weight: bold;
-            font-size: 16px;
-            transition: color 0.3s ease;
+           
         }
 
         .admin-link:hover{
-            color: #1a252f;
+        
             text-decoration: underline;
         }
 
@@ -181,6 +233,22 @@ if (isset($_GET['filter'])) {
         </div>
     </div>
     <div class="container">
+         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <div class="dashboard">
+                <div class="dashboard-card blue">
+                    <h3>Total Regd. Users</h3>
+                    <p><?php echo htmlspecialchars($total_users); ?></p>
+                </div>
+                <div class="dashboard-card red">
+                    <h3>Total Listed Recipes</h3>
+                    <p><?php echo htmlspecialchars($total_recipes); ?></p>
+               </div>
+                <div class="dashboard-card green">
+                    <h3>Total Reviews</h3>
+                    <p><?php echo htmlspecialchars($total_reviews); ?></p>
+                </div>
+            </div>
+        <?php endif; ?>
         <div class="filter-section">
             <form method="get" action="">
                 <select name="cuisine_id" onchange="this.form.submit()">

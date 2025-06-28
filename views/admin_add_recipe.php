@@ -244,29 +244,29 @@ $recipes = $controller->getRecipes();
             border-bottom: 1px solid #ddd;
         }
         .edit-btn,.delete-btn{
-            padding: 5px 12px;
+            padding: 8px 15px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-left: 6px;
+            color:white;
             text-decoration: none;
-            color: white;
+            line-height:36px;
             font-size: 14px;
             display: inline-block;
             text-align: center;
-            min-width: 80px;
-            height: 34px;
-            line-height: 34px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 90px;
+            height: 36px;
+            box-shadow: 0 4px 6px rgba(175, 21, 21, 0.64);
+            transition: all 0.3s ease;
         }
 
         .edit-btn{
             background-color: #1976d2;
+            
         }
 
         .edit-btn:hover{
-            background-color: #1565c0;
+            background-color:rgb(33, 112, 203);
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
         }
@@ -279,6 +279,11 @@ $recipes = $controller->getRecipes();
             background-color: #b71c1c;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(183, 28, 28, 0.3);
+        }
+        .button-group{
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
 
     </style>
@@ -373,15 +378,11 @@ $recipes = $controller->getRecipes();
                 <?php if (!empty($recipes)): ?>
                     <?php foreach ($recipes as $recipe): ?>
                         <div class="recipe-item">
-                            <span><?php echo htmlspecialchars($recipe['title']); ?></span>
-                            <div>
-                                <a href="?edit=<?php echo $recipe['id']; ?>" class="edit-btn">Edit</a>
-                                <form action="" method="get" style="display:inline;">
-                                    <input type="hidden" name="id" value="<?php echo $recipe['id']; ?>">
-                                    <input type="hidden" name="delete" value="1">
-                                    <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this recipe?')">Delete</button>
-                                </form>
-                            </div>
+                         <span><?php echo htmlspecialchars($recipe['title']); ?></span>
+                          <div class="button-group">
+                           <button class="edit-btn" onclick="window.location.href='?edit=<?php echo $recipe['id']; ?>'">Edit</button>
+                            <button class="delete-btn" onclick="if(confirm('Are you sure you want to delete this recipe?')) window.location.href='?delete=1&id=<?php echo $recipe['id']; ?>'">Delete</button>
+                         </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
