@@ -73,7 +73,7 @@ if (isset($_GET['delete'])&& isset($_GET['id'])){
     $result=$controller->deleteRecipe($id);
     if($result===true) {
         $success="Recipe deleted successfully";
-        header("Refresh:2;url=admin_add_recipe.php");
+        header("Refresh:0.5;url=admin_add_recipe.php");
     } 
     else{
         $error=$result;

@@ -149,9 +149,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 }
                 return;
             }
-
-            // Optional AJAX JSON submission
-            // Comment out below to fall back to normal form
             event.preventDefault(); // Prevent full form submission
 
             const response = await fetch('login.php',{
