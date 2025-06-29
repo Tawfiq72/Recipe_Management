@@ -11,18 +11,18 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the request is JSON
     if (strpos($_SERVER["CONTENT_TYPE"] ?? '', "application/json") !== false) {
-        $input = json_decode(file_get_contents("php://input"), true);
-        $username = trim($input['username'] ?? '');
-        $email = trim($input['email'] ?? '');
-        $password = trim($input['password'] ?? '');
-        $confirm_password = trim($input['confirm_password'] ?? '');
-        $isJson = true;
+        $input=json_decode(file_get_contents("php://input"), true);
+        $username=trim($input['username'] ?? '');
+        $email=trim($input['email'] ?? '');
+        $password=trim($input['password'] ?? '');
+        $confirm_password=trim($input['confirm_password'] ?? '');
+        $isJson=true;
     } else {
-        $username = trim($_POST['username'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $password = trim($_POST['password'] ?? '');
-        $confirm_password = trim($_POST['confirm_password'] ?? '');
-        $isJson = false;
+        $username=trim($_POST['username'] ?? '');
+        $email=trim($_POST['email'] ?? '');
+        $password=trim($_POST['password'] ?? '');
+        $confirm_password=trim($_POST['confirm_password'] ?? '');
+        $isJson=false;
     }
 
     // Validation

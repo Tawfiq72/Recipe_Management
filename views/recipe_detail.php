@@ -19,43 +19,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_timer_duration']))
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
     $label = $_POST['new_timer_label'] ?: "Step " . (count($timers) + 1);
     $duration_minutes = (int)$_POST['new_timer_duration'];
-    if ($duration_minutes > 0 && $user_id) {
-        $duration_seconds = $duration_minutes * 60; // Convert minutes to seconds
-        $query = "INSERT INTO timers (user_id, recipe_id, duration, label) VALUES (?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "iiis", $user_id, $id, $duration_seconds, $label);
+    if ($duration_minutes > 0 && $user_id){
+        $duration_seconds=$duration_minutes * 60; // Convert minutes to seconds
+        $query="INSERT INTO timers(user_id, recipe_id, duration, label) VALUES (?,?,?,?)";
+        $stmt=mysqli_prepare($conn,$query);
+        mysqli_stmt_bind_param($stmt,"iiis",$user_id, $id, $duration_seconds, $label);
         mysqli_stmt_execute($stmt);
         header("Refresh:0"); // Refresh to show new timer
     }
 }
 
 // Handle timer deletion
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])) {
-    $timer_id = (int)$_POST['delete_timer_id'];
-    $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
-    $query = "DELETE FROM timers WHERE id = ? AND user_id = ? AND recipe_id = ?";
-    $stmt = mysqli_prepare($conn, $query);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_timer_id'])){
+    $timer_id=(int)$_POST['delete_timer_id'];
+    $user_id=isset($_SESSION['user_id'])?$_SESSION['user_id'] : 0;
+    $query="DELETE FROM timers WHERE id=? AND user_id=? AND recipe_id = ?";
+    $stmt=mysqli_prepare($conn,$query);
     mysqli_stmt_bind_param($stmt, "iii", $timer_id, $user_id, $id);
     mysqli_stmt_execute($stmt);
     header("Refresh:0"); // Refresh to remove deleted timer
 }
 
 // Fetch existing timers for the recipe and user
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+$user_id=isset($_SESSION['user_id']) ? $_SESSION['user_id']:0;
 $timers = [];
-if ($user_id) {
-    $query = "SELECT id, label, duration FROM timers WHERE user_id = ? AND recipe_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "ii", $user_id, $id);
+if ($user_id){
+    $query="SELECT id, label, duration FROM timers WHERE user_id = ? AND recipe_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+    $stmt=mysqli_prepare($conn,$query);
+    mysqli_stmt_bind_param($stmt,"ii",$user_id,$id);
     mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    while ($row = mysqli_fetch_assoc($result)) {
-        $timers[] = $row;
+    $result=mysqli_stmt_get_result($stmt);
+    while($row=mysqli_fetch_assoc($result)){
+        $timers[]=$row;
     }
 }
 
-$ratings = $controller->getRatings($id);
-$average_rating = $controller->getAverageRating($id);
+$ratings=$controller->getRatings($id);
+$average_rating=$controller->getAverageRating($id);
 ?>
 
 <!DOCTYPE html>
