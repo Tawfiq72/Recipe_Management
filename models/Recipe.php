@@ -3,88 +3,103 @@
 class Recipe {
     private $conn;
 
-    public function __construct($conn) {
+    public function __construct($conn){
         $this->conn = $conn;
     }
 
-    public function getAllRecipes() {
+    public function getAllRecipes(){
         $query = "SELECT r.id, r.title, r.description, r.image, c.name as cuisine, m.name as meal_type 
                   FROM recipes r 
-                  LEFT JOIN cuisines c ON r.cuisine_id = c.id 
-                  LEFT JOIN meal_types m ON r.meal_type_id = m.id";
-        $result = mysqli_query($this->conn, $query);
-        $recipes = [];
-        while ($row = mysqli_fetch_assoc($result)) {
-            $row['image'] = $row['image'] ? $row['image'] : 'https://via.placeholder.com/300x200?text=' . urlencode($row['title']);
-            $recipes[] = $row;
+                  LEFT JOIN cuisines c ON r.cuisine_id=c.id 
+                  LEFT JOIN meal_types m ON r.meal_type_id=m.id";
+        $result=mysqli_query($this->conn, $query);
+        $recipes=[];
+        while ($row=mysqli_fetch_assoc($result)){
+            $row['image']=$row['image']?$row['image']:'https://via.placeholder.com/300x200?text='.urlencode($row['title']);
+            $recipes[]=$row;
         }
         return $recipes;
     }
 
     public function getFilteredRecipes($cuisine_id = null, $meal_type_id = null, $search_term = null) {
-        $query = "SELECT r.id, r.title, r.description, r.image, c.name as cuisine, m.name as meal_type 
+        $query="SELECT r.id, r.title, r.description, r.image, c.name as cuisine, m.name as meal_type 
                   FROM recipes r 
-                  LEFT JOIN cuisines c ON r.cuisine_id = c.id 
-                  LEFT JOIN meal_types m ON r.meal_type_id = m.id 
+                  LEFT JOIN cuisines c ON r.cuisine_id=c.id 
+                  LEFT JOIN meal_types m ON r.meal_type_id=m.id 
                   WHERE 1=1";
-        $params = [];
-        $param_types = "";
+        $params=[];
+        $param_types="";
 
         if ($cuisine_id) {
             $query .= " AND r.cuisine_id = ?";
-            $params[] = $cuisine_id;
-            $param_types .= "i";
+            $params[]=$cuisine_id;
+            $param_types.="i";
         }
-        if ($meal_type_id) {
+        if ($meal_type_id){
             $query .= " AND r.meal_type_id = ?";
-            $params[] = $meal_type_id;
-            $param_types .= "i";
+            $params[]=$meal_type_id;
+            $param_types .="i";
         }
         if ($search_term) {
-            $query .= " AND r.title LIKE ?";
-            $params[] = "%" . $search_term . "%";
+            $query .=" AND r.title LIKE ?";
+            $params[] ="%" . $search_term . "%";
             $param_types .= "s";
         }
 
-        $stmt = mysqli_prepare($this->conn, $query);
-        if (!empty($params)) {
-            mysqli_stmt_bind_param($stmt, $param_types, ...$params);
+        $stmt=mysqli_prepare($this->conn,$query);
+        if ($param_types==="i"){
+            mysqli_stmt_bind_param($stmt,$param_types,$params[0]);
+        } 
+        elseif($param_types==="ii")
+        {
+            mysqli_stmt_bind_param($stmt,$param_types,$params[0],$params[1]);
+        } 
+        elseif ($param_types==="iis"){
+            mysqli_stmt_bind_param($stmt,$param_types,$params[0],$params[1],$params[2]);
+        } 
+        elseif($param_types==="is")
+        {
+            mysqli_stmt_bind_param($stmt,$param_types,$params[0],$params[1]);
+        }
+         elseif($param_types==="s"){
+
+            mysqli_stmt_bind_param($stmt,$param_types,$params[0]);
         }
         mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+        $result=mysqli_stmt_get_result($stmt);
 
-        $recipes = [];
-        while ($row = mysqli_fetch_assoc($result)) {
-            $row['image'] = $row['image'] ? $row['image'] : 'https://via.placeholder.com/300x200?text=' . urlencode($row['title']);
-            $recipes[] = $row;
+        $recipes=[];
+        while($row=mysqli_fetch_assoc($result)){
+            $row['image']= $row['image']?$row['image']:'https://via.placeholder.com/300x200?text='.urlencode($row['title']);
+            $recipes[]=$row;
         }
         return $recipes;
     }
 
-    public function getRecipeById($id) {
+    public function getRecipeById($id){
         $query = "SELECT r.id, r.title, r.description, r.details, r.image, r.servings, 
                          c.name as cuisine, m.name as meal_type, r.cuisine_id, r.meal_type_id 
                   FROM recipes r 
                   LEFT JOIN cuisines c ON r.cuisine_id = c.id 
                   LEFT JOIN meal_types m ON r.meal_type_id = m.id 
-                  WHERE r.id = ?";
-        $stmt = mysqli_prepare($this->conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $id);
+                  WHERE r.id=?";
+        $stmt=mysqli_prepare($this->conn,$query);
+        mysqli_stmt_bind_param($stmt,"i",$id);
         mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $recipe = mysqli_fetch_assoc($result);
-        if ($recipe) {
-            $recipe['image'] = $recipe['image'] ? $recipe['image'] : 'https://via.placeholder.com/300x200?text=' . urlencode($recipe['title']);
-            $recipe['ingredients'] = $this->getIngredients($id);
+        $result=mysqli_stmt_get_result($stmt);
+        $recipe=mysqli_fetch_assoc($result);
+        if ($recipe){
+            $recipe['image']=$recipe['image']?$recipe['image']:'https://via.placeholder.com/300x200?text='.urlencode($recipe['title']);
+            $recipe['ingredients']=$this->getIngredients($id);
         }
         return $recipe;
     }
 
-    public function addRecipe($title, $description, $details, $servings, $cuisine_id, $meal_type_id, $image_path) {
-        $query = "INSERT INTO recipes (title, description, details, servings, cuisine_id, meal_type_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($this->conn, $query);
+    public function addRecipe($title,$description,$details,$servings,$cuisine_id,$meal_type_id,$image_path){
+        $query= "INSERT INTO recipes (title, description, details, servings, cuisine_id, meal_type_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt=mysqli_prepare($this->conn,$query);
         mysqli_stmt_bind_param($stmt, "sssiiis", $title, $description, $details, $servings, $cuisine_id, $meal_type_id, $image_path);
-        $success = mysqli_stmt_execute($stmt);
+        $success=mysqli_stmt_execute($stmt);
         if ($success) {
             return mysqli_insert_id($this->conn);
         }
@@ -199,14 +214,14 @@ class Recipe {
         return true;
     }
 
-    public function getIngredients($recipe_id) {
-        $query = "SELECT name, quantity, unit FROM ingredients WHERE recipe_id = ?";
-        $stmt = mysqli_prepare($this->conn, $query);
+    public function getIngredients($recipe_id){
+        $query="SELECT name, quantity, unit FROM ingredients WHERE recipe_id = ?";
+        $stmt=mysqli_prepare($this->conn, $query);
         mysqli_stmt_bind_param($stmt, "i", $recipe_id);
         mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $ingredients = [];
-        while ($row = mysqli_fetch_assoc($result)) {
+        $result=mysqli_stmt_get_result($stmt);
+        $ingredients=[];
+        while ($row=mysqli_fetch_assoc($result)) {
             $ingredients[] = $row;
         }
         return $ingredients;
