@@ -8,26 +8,32 @@ require_once '../controllers/UserController.php';
 $controller = new UserController($conn);
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $username=trim($_POST['username']);
+    $email=trim($_POST['email']);
+    $password=trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
 
     // Validation
-    if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
-        $error = "All fields are required.";
-    } elseif ($password !== $confirm_password) {
+    if (empty($username)||empty($email)||empty($password)||empty($confirm_password)){
+        $error="All fields are required.";
+    } 
+    elseif($password!==$confirm_password){
+
         $error = "Passwords do not match.";
-    } elseif (strlen($password) < 6) {
+    } 
+    elseif(strlen($password)<6){
+        
         $error = "Password must be at least 6 characters long.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    } 
+    elseif(!filter_var($email,FILTER_VALIDATE_EMAIL)){
         $error = "Invalid email format.";
-    } else {
-        $result = $controller->register($username, $email, $password);
-        if ($result === true) {
-            $_SESSION['username'] = $username;
-            $_SESSION['user_id'] = $controller->getUserId($username);
+    } 
+    else {
+        $result=$controller->register($username,$email,$password);
+        if ($result===true){
+            $_SESSION['username']=$username;
+            $_SESSION['user_id']=$controller->getUserId($username);
             header("Location: home.php");
             exit();
         } else {
