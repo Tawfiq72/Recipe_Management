@@ -12,11 +12,9 @@ $cuisines_query="SELECT id,name FROM cuisines";
 $cuisines_result=mysqli_query($conn,$cuisines_query);
 $cuisines=mysqli_fetch_all($cuisines_result,MYSQLI_ASSOC);
 
-
 $meal_types_query="SELECT id,name FROM meal_types";
 $meal_types_result=mysqli_query($conn,$meal_types_query);
 $meal_types=mysqli_fetch_all($meal_types_result,MYSQLI_ASSOC);
-
 
 $error='';
 $success='';
@@ -38,7 +36,6 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     ];
 
     if($id){
-        
         $result=$controller->updateRecipe($id,$title,$description,$details,$servings,$cuisine_id,$meal_type_id,$image,$ingredients);
         if ($result===true){
             $success="Recipe updated successfully";
@@ -83,13 +80,8 @@ if (isset($_GET['delete'])&& isset($_GET['id'])){
     }
 }
 
-
 $recipes = $controller->getRecipes();
-
-
-
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -260,14 +252,12 @@ $recipes = $controller->getRecipes();
             padding: 0 15px;
         }
 
-
         .edit-btn{
             background-color: #1976d2;
-            
         }
 
         .edit-btn:hover{
-            background-color:rgb(33, 112, 203);
+            background-color: rgb(33, 112, 203);
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
         }
@@ -286,7 +276,6 @@ $recipes = $controller->getRecipes();
             align-items:center;
             gap:10px;
         }
-
     </style>
 </head>
 <body>
@@ -306,7 +295,7 @@ $recipes = $controller->getRecipes();
             <?php if ($success): ?>
                 <p class="success"><?php echo $success; ?></p>
             <?php endif; ?>
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id" value="<?php echo $edit_mode ? $edit_recipe['id'] : ''; ?>">
                 <label for="title">Title</label>
                 <input type="text" id="title" name="title" value="<?php echo $edit_mode ? htmlspecialchars($edit_recipe['title']) : ''; ?>" required>
@@ -336,37 +325,23 @@ $recipes = $controller->getRecipes();
                 <input type="file" id="image" name="image" accept="image/jpeg,image/png">
                 <h3>Ingredients</h3>
                 <div id="ingredient-container">
-                    <?php if ($edit_mode && !empty($edit_recipe['ingredients'])): ?>
-                        <?php foreach ($edit_recipe['ingredients'] as $index => $ingredient): ?>
-                            <div class="ingredient-row">
-                                <input type="text" name="ingredient_name[]" value="<?php echo htmlspecialchars($ingredient['name']); ?>" placeholder="Ingredient Name" required>
-                                <input type="number" name="ingredient_quantity[]" value="<?php echo htmlspecialchars($ingredient['quantity']); ?>" placeholder="Quantity" min="0.01" step="0.01" required>
-                                <select name="ingredient_unit[]" required>
-                                    <option value="cups" <?php echo $ingredient['unit'] == 'cups' ? 'selected' : ''; ?>>Cups</option>
-                                    <option value="grams" <?php echo $ingredient['unit'] == 'grams' ? 'selected' : ''; ?>>Grams</option>
-                                    <option value="teaspoons" <?php echo $ingredient['unit'] == 'teaspoons' ? 'selected' : ''; ?>>Teaspoons</option>
-                                    <option value="tablespoons" <?php echo $ingredient['unit'] == 'tablespoons' ? 'selected' : ''; ?>>Tablespoons</option>
-                                    <option value="pieces" <?php echo $ingredient['unit'] == 'pieces' ? 'selected' : ''; ?>>Pieces</option>
-                                    <option value="ml" <?php echo $ingredient['unit'] == 'ml' ? 'selected' : ''; ?>>Milliliters</option>
-                                </select>
-                                <button type="button" class="remove-btn" <?php echo $index == 0 && count($edit_recipe['ingredients']) == 1 ? 'disabled' : ''; ?>>Remove</button>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="ingredient-row">
-                            <input type="text" name="ingredient_name[]" placeholder="Ingredient Name" required>
-                            <input type="number" name="ingredient_quantity[]" placeholder="Quantity" min="0.01" step="0.01" required>
-                            <select name="ingredient_unit[]" required>
-                                <option value="cups">Cups</option>
-                                <option value="grams">Grams</option>
-                                <option value="teaspoons">Teaspoons</option>
-                                <option value="tablespoons">Tablespoons</option>
-                                <option value="pieces">Pieces</option>
-                                <option value="ml">Milliliters</option>
-                            </select>
-                            <button type="button" class="remove-btn" disabled>Remove</button>
-                        </div>
-                    <?php endif; ?>
+                    <?php
+                    // Always start with one ingredient row
+                    $initialIngredient = $edit_mode && !empty($edit_recipe['ingredients']) ? $edit_recipe['ingredients'][0] : null;
+                    ?>
+                    <div class="ingredient-row">
+                        <input type="text" name="ingredient_name[]" value="<?php echo $initialIngredient ? htmlspecialchars($initialIngredient['name']) : ''; ?>" placeholder="Ingredient Name" required>
+                        <input type="number" name="ingredient_quantity[]" value="<?php echo $initialIngredient ? htmlspecialchars($initialIngredient['quantity']) : ''; ?>" placeholder="Quantity" min="0.01" step="0.01" required>
+                        <select name="ingredient_unit[]" required>
+                            <option value="cups" <?php echo $initialIngredient && $initialIngredient['unit'] == 'cups' ? 'selected' : ''; ?>>Cups</option>
+                            <option value="grams" <?php echo $initialIngredient && $initialIngredient['unit'] == 'grams' ? 'selected' : ''; ?>>Grams</option>
+                            <option value="teaspoons" <?php echo $initialIngredient && $initialIngredient['unit'] == 'teaspoons' ? 'selected' : ''; ?>>Teaspoons</option>
+                            <option value="tablespoons" <?php echo $initialIngredient && $initialIngredient['unit'] == 'tablespoons' ? 'selected' : ''; ?>>Tablespoons</option>
+                            <option value="pieces" <?php echo $initialIngredient && $initialIngredient['unit'] == 'pieces' ? 'selected' : ''; ?>>Pieces</option>
+                            <option value="ml" <?php echo $initialIngredient && $initialIngredient['unit'] == 'ml' ? 'selected' : ''; ?>>Milliliters</option>
+                        </select>
+                        <button type="button" class="remove-btn" disabled>Remove</button>
+                    </div>
                 </div>
                 <button type="button" class="add-ingredient-btn">Add Ingredient</button>
                 <button type="submit"><?php echo $edit_mode ? 'Update Recipe' : 'Add Recipe'; ?></button>
