@@ -121,7 +121,7 @@ $total_recipes=mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total_
             <div style="text-align:center; margin-bottom: 30px;">
                 <a href="admin_add_recipe.php" style="
                     display: inline-block;
-                    background-color: #1976d2;
+                    background-color:rgb(97, 4, 4);
                     color: white;
                     padding: 12px 24px;
                     border-radius: 8px;
@@ -130,7 +130,7 @@ $total_recipes=mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total_
                     font-weight: bold;
                     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
                     transition: 0.3s ease;
-                " onmouseover="this.style.backgroundColor='#125ea7'" onmouseout="this.style.backgroundColor='#1976d2'">
+                " onmouseover="this.style.backgroundColor='rgba(93, 5, 5, 0.2)'" onmouseout="this.style.backgroundColor='rgb(24, 3, 20)'">
                     ➕ Manage Recipes
                 </a>
             </div>
