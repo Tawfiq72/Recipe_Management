@@ -102,5 +102,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
         <a href="register.php" class="register-link">Need an account? Register</a>
     </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const username = document.querySelector('input[name="username"]').value.trim();
+            const password = document.querySelector('input[name="password"]').value.trim();
+            const errorElement = document.querySelector('.error');
+
+            // Clear previous error message
+            if (errorElement) {
+                errorElement.textContent = '';
+            }
+
+            // Validate fields
+            if (!username || !password) {
+                event.preventDefault(); // Prevent form submission
+                if (errorElement) {
+                    errorElement.textContent = 'All fields are required.';
+                } else {
+                    const newError = document.createElement('p');
+                    newError.className = 'error';
+                    newError.textContent = 'All fields are required.';
+                    this.insertAdjacentElement('beforebegin', newError);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
