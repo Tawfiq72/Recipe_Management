@@ -53,13 +53,31 @@ $total_recipes = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS tota
         </div>
     </div>
     <div class="container">
-        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+       <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <div class="dashboard">
                 <div class="dashboard-card">Total Users<br><strong><?= $total_users ?></strong></div>
                 <div class="dashboard-card">Total Recipes<br><strong><?= $total_recipes ?></strong></div>
                 <div class="dashboard-card">Total Reviews<br><strong><?= $total_reviews ?></strong></div>
             </div>
+
+            <div style="text-align:center; margin-bottom: 30px;">
+                <a href="admin_add_recipe.php" style="
+                    display: inline-block;
+                    background-color: #1976d2;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-size: 16px;
+                    font-weight: bold;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+                    transition: 0.3s ease;
+                " onmouseover="this.style.backgroundColor='#125ea7'" onmouseout="this.style.backgroundColor='#1976d2'">
+                    ➕ Manage Recipes
+                </a>
+            </div>
         <?php endif; ?>
+
 
         <div class="filter-section">
             <form id="filterForm">
