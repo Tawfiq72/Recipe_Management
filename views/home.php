@@ -131,7 +131,7 @@ $total_recipes=mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total_
                     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
                    
                 " onmouseover="this.style.backgroundColor='rgba(93, 5, 5, 0.2)'" onmouseout="this.style.backgroundColor='rgb(24, 3, 20)'">
-                    ➕ Manage Recipes
+                    Manage Recipes
                 </a>
             </div>
         <?php endif; ?>
