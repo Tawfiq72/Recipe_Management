@@ -8,37 +8,40 @@ $controller = new UserController($conn);
 $error = '';
 
 // Handle POST request
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     // Support JSON (AJAX) or normal form POST
-    if (strpos($_SERVER["CONTENT_TYPE"] ?? '', "application/json") !== false) {
-        $data = json_decode(file_get_contents("php://input"), true);
-        $username = trim($data['username'] ?? '');
-        $password = trim($data['password'] ?? '');
+    if (strpos($_SERVER["CONTENT_TYPE"] ?? '', "application/json") !== false){
+        $data=json_decode(file_get_contents("php://input"),true);
+        $username=trim($data['username'] ?? '');
+        $password=trim($data['password'] ?? '');
     } else {
-        $username = trim($_POST['username'] ?? '');
-        $password = trim($_POST['password'] ?? '');
+        $username=trim($_POST['username'] ?? '');
+        $password=trim($_POST['password'] ?? '');
     }
 
-    if (empty($username) || empty($password)) {
-        $error = "All fields are required.";
-        if (isset($data)) {
-            echo json_encode(["status" => "error", "message" => $error]);
+    if (empty($username) || empty($password)){
+        $error="All fields are required.";
+        if (isset($data)){
+            echo json_encode(["status"=>"error","message"=>$error]);
             exit();
         }
-    } else {
+    } 
+    else{
         $result = $controller->login($username, $password);
-        if ($result === true) {
-            if (isset($data)) {
-                echo json_encode(["status" => "success"]);
+        if ($result===true){
+            if(isset($data)){
+                echo json_encode(["status"=>"success"]);
                 exit();
-            } else {
+            } 
+            else{
                 header("Location: home.php");
                 exit();
             }
-        } else {
-            $error = $result;
-            if (isset($data)) {
-                echo json_encode(["status" => "error", "message" => $error]);
+        } 
+        else{
+            $error=$result;
+            if(isset($data)){
+                echo json_encode(["status"=>"error", "message"=>$error]);
                 exit();
             }
         }
@@ -125,24 +128,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            const form = this;
-            const username = form.username.value.trim();
-            const password = form.password.value.trim();
-            const existingError = document.querySelector('.error');
+            const form=this;
+            const username=form.username.value.trim();
+            const password=form.password.value.trim();
+            const existingError=document.querySelector('.error');
 
-            if (existingError) {
-                existingError.textContent = '';
+            if (existingError){
+                existingError.textContent='';
             }
 
             if (!username || !password) {
                 event.preventDefault();
                 if (existingError) {
-                    existingError.textContent = 'All fields are required.';
+                    existingError.textContent='All fields are required.';
                 } else {
-                    const error = document.createElement('p');
-                    error.className = 'error';
-                    error.textContent = 'All fields are required.';
-                    form.insertAdjacentElement('beforebegin', error);
+                    const error=document.createElement('p');
+                    error.className='error';
+                    error.textContent='All fields are required.';
+                    form.insertAdjacentElement('beforebegin',error);
                 }
                 return;
             }
@@ -151,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Comment out below to fall back to normal form
             event.preventDefault(); // Prevent full form submission
 
-            const response = await fetch('login.php', {
+            const response = await fetch('login.php',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -159,18 +162,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 body: JSON.stringify({ username, password })
             });
 
-            const result = await response.json();
+            const result=await response.json();
 
-            if (result.status === 'success') {
-                window.location.href = 'home.php';
+            if (result.status==='success') {
+                window.location.href='home.php';
             } else {
                 if (existingError) {
-                    existingError.textContent = result.message;
+                    existingError.textContent=result.message;
                 } else {
-                    const error = document.createElement('p');
-                    error.className = 'error';
-                    error.textContent = result.message;
-                    form.insertAdjacentElement('beforebegin', error);
+                    const error=document.createElement('p');
+                    error.className='error';
+                    error.textContent=result.message;
+                    form.insertAdjacentElement('beforebegin',error);
                 }
             }
         });
