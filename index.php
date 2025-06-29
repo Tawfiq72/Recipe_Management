@@ -1,5 +1,5 @@
 <?php
 session_start();
-header("Location:views/register.php");
+header("Location:views/login.php");
 exit();
 ?>
