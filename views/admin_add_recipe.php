@@ -30,7 +30,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     $servings=(int)$_POST['servings'];
     $cuisine_id=(int)$_POST['cuisine_id'];
     $meal_type_id=(int)$_POST['meal_type_id'];
-    $image=$_FILES['image'];
+    $image = isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK ? $_FILES['image'] : null;
     $ingredients=[
         'name'=>$_POST['ingredient_name'],
         'quantity'=>$_POST['ingredient_quantity'],
@@ -306,7 +306,7 @@ $recipes = $controller->getRecipes();
             <?php if ($success): ?>
                 <p class="success"><?php echo $success; ?></p>
             <?php endif; ?>
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id" value="<?php echo $edit_mode ? $edit_recipe['id'] : ''; ?>">
                 <label for="title">Title</label>
                 <input type="text" id="title" name="title" value="<?php echo $edit_mode ? htmlspecialchars($edit_recipe['title']) : ''; ?>" required>
